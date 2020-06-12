@@ -11,14 +11,14 @@ describe("Acceptance tests for Data functions", () => {
     });
   });
 
-  describe("can get data directory", () => {
-    it("data directory as absolute path", () => {
+  describe("can get file from data directory", () => {
+    it("file in data directory as absolute path", () => {
       const repoRoot = process.env.INIT_CWD;
-      const dataDir = data.getDataDir();
+      const dataDir = data.getDataFile("foo", "bar", "version.json");
 
       assert(dataDir);
       assert(path.isAbsolute(dataDir));
-      assert.equal(dataDir, `${repoRoot}/data`);
+      assert.equal(dataDir, `${repoRoot}/data/foo/bar/version.json`);
     });
   });
 });

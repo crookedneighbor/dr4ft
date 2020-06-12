@@ -1,18 +1,16 @@
 const fs = require("fs");
-const path = require("path");
 const axios = require("axios");
 const unzip = require("unzipper");
 const semver = require("semver");
 const updateDatabase = require("./update_database");
 const logger = require("../backend/logger");
 const { refresh: refreshVersion } = require("../backend/mtgjson");
-const { getDataDir } = require("../backend/data");
+const { getDataFile } = require("../backend/data");
 
 const MTGJSON_SETS_ZIP_URL = "https://www.mtgjson.com/files/AllSetFiles.zip";
 const REMOTE_VERSION_METADATA_URL = "https://www.mtgjson.com/files/version.json";
-const PATH_TO_LOCAL_VERSION_METADATA = path.join(getDataDir(), "version.json");
-
-const setsDataDir = path.join(getDataDir(), "sets");
+const PATH_TO_LOCAL_VERSION_METADATA = getDataFile("version.json");
+const PATH_TO_SET_DATA_DIR = getDataFile("sets");
 
 /**
  * An object with metadata related to the revision of MTGJSON data.
@@ -81,7 +79,7 @@ const fetchZip = () => (
       responseType: "stream"
     }).then(response => {
       response.data.pipe(unzip.Extract({
-        path: setsDataDir,
+        path: PATH_TO_SET_DATA_DIR,
         concurrency: 4
       }))
         .on("finish", resolve)

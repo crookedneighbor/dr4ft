@@ -3,12 +3,12 @@ const fs = require("fs");
 const assert = require("assert");
 const toBoosterCard = require("./toBoosterCard");
 const path = require("path");
-const {getDataDir} = require("../data");
+const {getDataFile} = require("../data");
 
 describe("Acceptance tests for toBoosterCard function", () => {
   describe("can parse all the sets", () => {
     it("parse cards without errors from all the sets downloaded", () => {
-      const setsDataDir = path.join(getDataDir(), "sets");
+      const setsDataDir = getDataFile("sets");
       if (fs.existsSync(setsDataDir)) {
         const files = fs.readdirSync(setsDataDir);
         files.forEach(file => {

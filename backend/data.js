@@ -12,10 +12,9 @@ const BOOSTER_RULES_PATH = "boosterRules.json";
 
 let cards, cubableCardsByName, sets, playableSets, latestSet, boosterRules;
 
-const getDataDir = () => {
+const getDataFile = (...paths) => {
   const repoRoot = process.cwd();
-  const dataDir = path.join(repoRoot, DATA_DIR);
-  return dataDir;
+  return path.join(repoRoot, DATA_DIR, ...paths);
 };
 
 const reloadData = (filename) => {
@@ -43,7 +42,7 @@ const reloadData = (filename) => {
 
 const getSets = () => {
   if (!sets) {
-    sets = readFile(`${getDataDir()}/${SETS_PATH}`);
+    sets = readFile(getDataFile(SETS_PATH));
   }
   return sets;
 };
@@ -52,7 +51,7 @@ const getSet = (setCode) => getSets()[setCode];
 
 const getCards = () => {
   if (!cards) {
-    cards = readFile(`${getDataDir()}/${CARDS_PATH}`);
+    cards = readFile(getDataFile(CARDS_PATH));
   }
   return cards;
 };
@@ -82,13 +81,13 @@ const getCardByUuid = (uuid) => {
 
 const getCubableCardByName = (cardName) => {
   if (!cubableCardsByName) {
-    cubableCardsByName = readFile(`${getDataDir()}/${CUBABLE_CARDS_PATH}`);
+    cubableCardsByName = readFile(getDataFile(CUBABLE_CARDS_PATH));
   }
   return getCardByUuid(cubableCardsByName[cardName]);
 };
 
 const writeCards = (newCards) => {
-  fs.writeFileSync(`${getDataDir()}/${CARDS_PATH}`, JSON.stringify(newCards, undefined, 4));
+  fs.writeFileSync(getDataFile(CARDS_PATH), JSON.stringify(newCards, undefined, 4));
 };
 
 const sortByPriority = allSets => (card1, card2) => {
@@ -127,11 +126,11 @@ const writeCubeCards = (allSets, allCards) => {
       })));
     });
   cubableCardsByName = keyCardsUuidByName(cubableCards);
-  fs.writeFileSync(`${getDataDir()}/${CUBABLE_CARDS_PATH}`, JSON.stringify(cubableCardsByName, undefined, 4));
+  fs.writeFileSync(getDataFile(CUBABLE_CARDS_PATH), JSON.stringify(cubableCardsByName, undefined, 4));
 };
 
 const writeSets = (newSets) => {
-  fs.writeFileSync(`${getDataDir()}/${SETS_PATH}`, JSON.stringify(newSets, undefined, 4));
+  fs.writeFileSync(getDataFile(SETS_PATH), JSON.stringify(newSets, undefined, 4));
 };
 
 const getPlayableSets = () => {
@@ -228,16 +227,16 @@ const isReleasedExpansionOrCoreSet = (type, releaseDate) => (
 );
 
 function saveDraftStats(id, stats) {
-  if (!fs.existsSync(`${getDataDir()}/${DRAFT_STATS_DIR}`)) {
-    fs.mkdirSync(`${getDataDir()}/${DRAFT_STATS_DIR}`);
+  if (!fs.existsSync(getDataFile(DRAFT_STATS_DIR))) {
+    fs.mkdirSync(getDataFile(DRAFT_STATS_DIR));
   }
 
-  fs.writeFileSync(`${getDataDir()}/${DRAFT_STATS_DIR}/${id}.json`, JSON.stringify(stats, undefined, 4));
+  fs.writeFileSync(getDataFile(DRAFT_STATS_DIR, `${id}.json`), JSON.stringify(stats, undefined, 4));
 }
 
 const getBoosterRules = (setCode) => {
   if (!boosterRules) {
-    boosterRules = readFile(`${getDataDir()}/${BOOSTER_RULES_PATH}`);
+    boosterRules = readFile(getDataFile(BOOSTER_RULES_PATH));
   }
   return boosterRules[setCode];
 };
@@ -245,7 +244,7 @@ const getBoosterRules = (setCode) => {
 const getBoosterRulesVersion = () => {
   if (!boosterRules) {
     try {
-      boosterRules = readFile(`${getDataDir()}/${BOOSTER_RULES_PATH}`);
+      boosterRules = readFile(getDataFile(BOOSTER_RULES_PATH));
     } catch(error) {
       return "";
     }
@@ -254,11 +253,11 @@ const getBoosterRulesVersion = () => {
 };
 
 const saveBoosterRules = (boosterRules) => {
-  fs.writeFileSync(`${getDataDir()}/${BOOSTER_RULES_PATH}`, JSON.stringify(boosterRules, undefined, 4));
+  fs.writeFileSync(getDataFile(BOOSTER_RULES_PATH), JSON.stringify(boosterRules, undefined, 4));
 };
 
 module.exports = {
-  getDataDir,
+  getDataFile,
   getCards,
   getSets,
   getSet,
